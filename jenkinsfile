@@ -1,54 +1,29 @@
 pipeline {
     agent any
-
+    
     stages {
-        stage('Checkout Code') {
+        stage('Clone Repository') {
             steps {
-                echo "Cloning repository from GitHub..."
-                git branch: 'main', 
-                    credentialsId: 'github-creds', 
-                    url: 'https://github.com/Mamatha1206/Jenkins_pipeline.git'
+                git branch: 'main', url: 'https://github.com/jenkins_pipeline/jenkinsfile.git'
             }
         }
-
-        stage('Install Dependencies') {
+        
+        stage('Build') {
             steps {
-                echo "Installing dependencies..."
-                sh 'npm install'  // Modify as needed
+                sh 'echo Building the project...'
             }
         }
-
-        stage('Run Tests') {
+        
+        stage('Test') {
             steps {
-                echo "Running tests..."
-                sh 'npm test'  // Modify for your project
+                sh 'echo Running tests...'
             }
         }
-
-        stage('Build Application') {
-            steps {
-                echo "Building the application..."
-                sh 'npm run build'  // Modify as needed
-            }
-        }
-
+        
         stage('Archive Artifacts') {
             steps {
-                echo "Archiving build artifacts..."
-                archiveArtifacts artifacts: 'build/**', fingerprint: true
+                archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
             }
-        }
-    }
-
-    post {
-        success {
-            echo "✅ BUILD SUCCESSFUL: The pipeline completed successfully!"
-        }
-        failure {
-            echo "❌ BUILD FAILED: Check the logs for errors."
         }
     }
 }
-
-
-
