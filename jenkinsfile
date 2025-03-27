@@ -15,16 +15,3 @@ pipeline {
             }
         }
         
-        stage('Test') {
-            steps {
-                sh 'echo Running tests...'
-            }
-        }
-        
-        stage('Archive Artifacts') {
-            steps {
-                archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
-            }
-        }
-    }
-}
