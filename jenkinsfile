@@ -1,0 +1,55 @@
+pipeline {
+    agent any
+
+    environment {
+        VENV = "venv"
+        PYTHON_VERSION = "python3"  
+    }
+
+    stages {
+        stage('Clone Repository') {
+            steps {
+                git branch: 'main', url: 'https://Mamatha1206/Jenkins_pipeline/pythonapp.git'
+            }
+        }
+
+        stage('Set up Python Environment') {
+            steps {
+                sh '${PYTHON_VERSION} -m venv ${VENV}'
+                sh 'source ${VENV}/bin/activate'
+                sh 'pip install --upgrade pip'
+                sh 'pip install -r requirements.txt'
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                sh 'source ${VENV}/bin/activate && pytest tests/'
+            }
+        }
+
+        stage('Build Package') {
+            steps {
+                sh 'source ${VENV}/bin/activate && python setup.py sdist'
+            }
+        }
+
+        stage('Archive Artifact') {
+            steps {
+                archiveArtifacts artifacts: 'dist/*.tar.gz', fingerprint: true
+            }
+        }
+    }
+
+    post {
+        always {
+            sh 'deactivate || true'
+        }
+        success {
+            echo 'Build completed successfully!'
+        }
+        failure {
+            echo 'Build failed!'
+        }
+    }
+}
