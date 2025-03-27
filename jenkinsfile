@@ -4,13 +4,14 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git branch: 'main', url: 'https://github.com/jenkins_pipeline/jenkinsfile.git'
+                git (url:'hhtps://github.com/Mamatha1206/jenkins_pipeline.git'
+
             }
         }
         
-        stage('Build') {
+        stage('Run Code') {
             steps {
-                sh 'echo Building the project...'
+                sh 'python3.fist.py'
             }
         }
         
