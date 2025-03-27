@@ -1,55 +1,54 @@
 pipeline {
     agent any
 
-    environment {
-        VENV = "venv"
-        PYTHON_VERSION = "python3"  
-    }
-
     stages {
-        stage('Clone Repository') {
+        stage('Checkout Code') {
             steps {
-                git branch: 'main', url: 'https://Mamatha1206/Jenkins_pipeline/pythonapp.git'
+                echo "Cloning repository from GitHub..."
+                git branch: 'main', 
+                    credentialsId: 'github-creds', 
+                    url: 'https://github.com/Mamatha1206/Jenkins_pipeline.git'
             }
         }
 
-        stage('Set up Python Environment') {
+        stage('Install Dependencies') {
             steps {
-                sh '${PYTHON_VERSION} -m venv ${VENV}'
-                sh 'source ${VENV}/bin/activate'
-                sh 'pip install --upgrade pip'
-                sh 'pip install -r requirements.txt'
+                echo "Installing dependencies..."
+                sh 'npm install'  // Modify as needed
             }
         }
 
         stage('Run Tests') {
             steps {
-                sh 'source ${VENV}/bin/activate && pytest tests/'
+                echo "Running tests..."
+                sh 'npm test'  // Modify for your project
             }
         }
 
-        stage('Build Package') {
+        stage('Build Application') {
             steps {
-                sh 'source ${VENV}/bin/activate && python setup.py sdist'
+                echo "Building the application..."
+                sh 'npm run build'  // Modify as needed
             }
         }
 
-        stage('Archive Artifact') {
+        stage('Archive Artifacts') {
             steps {
-                archiveArtifacts artifacts: 'dist/*.tar.gz', fingerprint: true
+                echo "Archiving build artifacts..."
+                archiveArtifacts artifacts: 'build/**', fingerprint: true
             }
         }
     }
 
     post {
-        always {
-            sh 'deactivate || true'
-        }
         success {
-            echo 'Build completed successfully!'
+            echo "✅ BUILD SUCCESSFUL: The pipeline completed successfully!"
         }
         failure {
-            echo 'Build failed!'
+            echo "❌ BUILD FAILED: Check the logs for errors."
         }
     }
 }
+
+
+
